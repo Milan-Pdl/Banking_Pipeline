@@ -1,5 +1,5 @@
 import psycopg2
-
+from .dbconfig import PASSWORD,DATABASE,USER,HOST
 class DatabaseConnection:
     _instance = None
     _connection = None
@@ -11,11 +11,11 @@ class DatabaseConnection:
 
             # Create PostgreSQL connection once
             cls._connection = psycopg2.connect(
-                host="localhost",
+                host=HOST,
                 port=5432,
-                database="BankDB",
-                user="user",
-                password="password"
+                database=DATABASE,
+                user=USER,
+                password=PASSWORD
             )
 
         return cls._instance
@@ -27,15 +27,22 @@ class DatabaseConnection:
 
 db1 = DatabaseConnection()
 db2 = DatabaseConnection()
+def get_db():
+    try:
+        yield db1.get_connection()
+    except ConnectionError:
+        print("failed connection")
 
-print(db1 is db2)  
+get_db()
 
-conn = db1.get_connection()
+# print(db1 is db2)  
 
-cursor = conn.cursor()
-cursor.execute("SELECT * from bank.transaction;")
+# conn = db1.get_connection()
 
-print(cursor.fetchone())
+# cursor = conn.cursor()
+# cursor.execute("SELECT * from bank.transaction;")
 
-cursor.close()
+# print(cursor.fetchone())
+
+# cursor.close()
 
