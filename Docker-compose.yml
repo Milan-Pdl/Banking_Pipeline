@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:latest
-    container_name: postgres_db
+    container_name: postgres_db_bank
     restart: always
     environment:
       POSTGRES_USER: user
@@ -16,7 +16,7 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4
-    container_name: pgadmin
+    container_name: pgadmin_bank
     restart: always
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
