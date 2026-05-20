@@ -1,0 +1,2 @@
+from .config import SECERET_ACCESS_KEY,ACCESS_KEY
+__all__=["SECERET_ACCESS_KEY","ACCESS_KEY"]

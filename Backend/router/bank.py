@@ -9,6 +9,56 @@ bank_router = APIRouter(
     tags=["Info"]
 )
 
+# --- ACCOUNT ENDPOINT ---
+@bank_router.get("/accounts")
+@limiter.limit("2/minute")  
+def get_accounts(request: Request, db: Depends = Depends(get_db)):
+    cursor = db.cursor()
+    cursor.execute(f"SELECT * FROM {SCHEMA}.account;")
+    accounts = cursor.fetchall()
+    cursor.close()
+    return {"accounts": accounts}
+
+# --- BRANCH ENDPOINT ---
+@bank_router.get("/branches")
+@limiter.limit("2/minute")  
+def get_branches(request: Request, db: Depends = Depends(get_db)):
+    cursor = db.cursor()
+    cursor.execute(f"SELECT * FROM {SCHEMA}.branch;")
+    branches = cursor.fetchall()
+    cursor.close()
+    return {"branches": branches}
+
+# --- CARD ENDPOINT ---
+@bank_router.get("/cards")
+@limiter.limit("2/minute")  
+def get_cards(request: Request, db: Depends = Depends(get_db)):
+    cursor = db.cursor()
+    cursor.execute(f"SELECT * FROM {SCHEMA}.card;")
+    cards = cursor.fetchall()
+    cursor.close()
+    return {"cards": cards}
+
+# --- CUSTOMER ENDPOINT ---
+@bank_router.get("/customers")
+@limiter.limit("2/minute")  
+def get_customers(request: Request, db: Depends = Depends(get_db)):
+    cursor = db.cursor()
+    cursor.execute(f"SELECT * FROM {SCHEMA}.customer;")
+    customers = cursor.fetchall()
+    cursor.close()
+    return {"customers": customers}
+
+# --- PRODUCT ENDPOINT ---
+@bank_router.get("/products")
+@limiter.limit("2/minute")  
+def get_products(request: Request, db: Depends = Depends(get_db)):
+    cursor = db.cursor()
+    cursor.execute(f"SELECT * FROM {SCHEMA}.product;")
+    products = cursor.fetchall()
+    cursor.close()
+    return {"products": products}
+
 @bank_router.get("/transactions")
 @limiter.limit("2/minute")  
 def get_transactions(request: Request, db: Depends = Depends(get_db)):
