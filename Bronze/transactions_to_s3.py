@@ -12,7 +12,7 @@ API_URL = "http://localhost:8000/api/bank/transactions"
 
 
 S3_BUCKET = "milan-aafno-project"
-S3_PREFIX = "banking/transactions"
+S3_PREFIX = "bronze/transactions"
 
 AWS_REGION = AWS_REGION
 
@@ -45,10 +45,10 @@ def build_polars_dataframe(transactions):
     df = pl.DataFrame(transactions,strict=False)
 
     # Optional transformations
-    if "transaction_date" in df.columns:
-        df = df.with_columns(
-            pl.col("transaction_date").str.to_datetime(strict=False)
-        )
+    # if "transaction_date" in df.columns:
+    #     df = df.with_columns(
+    #         pl.col("transaction_date").str.to_datetime(strict=False)
+    #     )
 
     return df
 
