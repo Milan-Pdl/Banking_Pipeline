@@ -46,7 +46,7 @@ def get_cards(request: Request, db: Depends = Depends(get_db)):
         schema=SCHEMA,
         table_name="card"
     )
-    return cards
+    return {"cards":cards}
 
 # --- CUSTOMER ENDPOINT ---
 @bank_router.get("/customers")
