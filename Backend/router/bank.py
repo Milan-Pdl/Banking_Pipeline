@@ -3,6 +3,7 @@ from fastapi import APIRouter, Request
 from ..utils import limiter  # Import the shared limiter instance
 from fastapi import Depends
 from ..config import get_db,SCHEMA
+from ..utils import fetch_table_as_json
 
 bank_router = APIRouter(
     prefix="/bank",
@@ -11,68 +12,80 @@ bank_router = APIRouter(
 
 # --- ACCOUNT ENDPOINT ---
 @bank_router.get("/accounts")
-@limiter.limit("2/minute")  
+@limiter.limit("2/minute")
 def get_accounts(request: Request, db: Depends = Depends(get_db)):
-    cursor = db.cursor()
-    cursor.execute(f"SELECT * FROM {SCHEMA}.account;")
-    accounts = cursor.fetchall()
-    cursor.close()
+
+    accounts = fetch_table_as_json(
+        db=db,
+        schema=SCHEMA,
+        table_name="account"
+    )
+
     return {"accounts": accounts}
 
 # --- BRANCH ENDPOINT ---
 @bank_router.get("/branches")
-@limiter.limit("2/minute")  
+@limiter.limit("2/minute")
 def get_branches(request: Request, db: Depends = Depends(get_db)):
-    cursor = db.cursor()
-    cursor.execute(f"SELECT * FROM {SCHEMA}.branch;")
-    branches = cursor.fetchall()
-    cursor.close()
+
+    branches = fetch_table_as_json(
+        db=db,
+        schema=SCHEMA,
+        table_name="branch"
+    )
+
     return {"branches": branches}
 
 # --- CARD ENDPOINT ---
 @bank_router.get("/cards")
-@limiter.limit("2/minute")  
+@limiter.limit("2/minute")
 def get_cards(request: Request, db: Depends = Depends(get_db)):
-    cursor = db.cursor()
-    cursor.execute(f"SELECT * FROM {SCHEMA}.card;")
-    cards = cursor.fetchall()
-    cursor.close()
-    return {"cards": cards}
+
+    cards = fetch_table_as_json(
+        db=db,
+        schema=SCHEMA,
+        table_name="card"
+    )
+    return cards
 
 # --- CUSTOMER ENDPOINT ---
 @bank_router.get("/customers")
-@limiter.limit("2/minute")  
+@limiter.limit("2/minute")
 def get_customers(request: Request, db: Depends = Depends(get_db)):
-    cursor = db.cursor()
-    cursor.execute(f"SELECT * FROM {SCHEMA}.customer;")
-    customers = cursor.fetchall()
-    cursor.close()
+
+    customers = fetch_table_as_json(
+        db=db,
+        schema=SCHEMA,
+        table_name="customer"
+    )
+
     return {"customers": customers}
 
 # --- PRODUCT ENDPOINT ---
 @bank_router.get("/products")
-@limiter.limit("2/minute")  
+@limiter.limit("2/minute")
 def get_products(request: Request, db: Depends = Depends(get_db)):
-    cursor = db.cursor()
-    cursor.execute(f"SELECT * FROM {SCHEMA}.product;")
-    products = cursor.fetchall()
-    cursor.close()
+
+    products = fetch_table_as_json(
+        db=db,
+        schema=SCHEMA,
+        table_name="product"
+    )
+
     return {"products": products}
 
+#transactions endpoint 
+
 @bank_router.get("/transactions")
-@limiter.limit("2/minute")  
+@limiter.limit("2/minute")
 def get_transactions(request: Request, db: Depends = Depends(get_db)):
 
-    cursor = db.cursor()
-    # 2. Execute the query
-    cursor.execute(f"SELECT * FROM {SCHEMA}.transaction;")
-    
-    # 3. Fetch the rows out of the database memory
-    transactions = cursor.fetchall()
-    
-    # 4. Close the cursor so you don't leak connections
-    cursor.close()
-    
+    transactions = fetch_table_as_json(
+        db=db,
+        schema=SCHEMA,
+        table_name="transaction"
+    )
+
     return {"transactions": transactions}
 
 
