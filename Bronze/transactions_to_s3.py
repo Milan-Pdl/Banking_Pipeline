@@ -4,7 +4,7 @@ import boto3
 
 from io import BytesIO
 from datetime import datetime
-from config import SECERET_ACCESS_KEY,ACCESS_KEY
+from config import SECERET_ACCESS_KEY,ACCESS_KEY,AWS_REGION
 
 
 API_URL = "http://localhost:8000/api/bank/transactions"
@@ -14,7 +14,7 @@ API_URL = "http://localhost:8000/api/bank/transactions"
 S3_BUCKET = "milan-aafno-project"
 S3_PREFIX = "banking/transactions"
 
-AWS_REGION = "us-east-1"
+AWS_REGION = AWS_REGION
 
 
 

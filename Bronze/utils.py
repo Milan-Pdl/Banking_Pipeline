@@ -10,11 +10,17 @@ from config import BUCKET_NAME,ACCESS_KEY,SECERET_ACCESS_KEY
 # --- Configuration ---
 AWS_REGION = "us-east-1"
 S3_BUCKET = BUCKET_NAME  # Replace with your bucket
-BASE_API_URL = "http://localhost:8000//api/bank/"
+BASE_API_URL = "http://localhost:8000/api/bank"
 BRONZE_LAYER = "bronze"
 
 def get_s3_client():
-    return boto3.client("s3", region_name=AWS_REGION)
+        s3_client = boto3.client(
+        "s3",
+        aws_access_key_id=ACCESS_KEY,
+        aws_secret_access_key=SECERET_ACCESS_KEY,
+        region_name=AWS_REGION
+    )
+        return s3_client
 
 def fetch_and_process_table(table_name: str, endpoint: str, primary_key: str):
     """
@@ -56,6 +62,9 @@ def fetch_and_process_table(table_name: str, endpoint: str, primary_key: str):
     existing_df = None
     try:
         s3_obj = s3_client.get_object(Bucket=S3_BUCKET, Key=s3_key)
+        s3_obj = s3_client.get_object(Bucket=S3_BUCKET, Key=s3_key)
+        print(f"-------------------{s3_obj}-----------------------")
+        # print(f"-------------------{s3_obj[]}-----------------------")
         existing_df = pl.read_parquet(BytesIO(s3_obj["Body"].read()))
         print("[-] Found existing Parquet layer on S3. Merging datasets...")
     except ClientError as e:
@@ -65,10 +74,44 @@ def fetch_and_process_table(table_name: str, endpoint: str, primary_key: str):
             print(f"[ERROR] S3 breakdown while retrieving existing file: {e}")
             raise
 
-    # Step 4: Vertical Concatenation & Primary Key Deduplication
+
     if existing_df is not None:
         # vertical_relaxed safely handles column ordering or minor type upcasts
         final_df = pl.concat([existing_df, new_df], how="vertical_relaxed")
+            # Step 4: Vertical Concatenation & Primary Key Deduplication
+
+            # take this example for understanding what is happening
+
+            #     Existing S3 parquet (existing_df)
+            # id	name
+            # 1	    Ram
+            # 2	    Hari
+            # New   API data (new_df)
+            # id	name
+            # 2	    Hari Updated
+            # 3	    Sita
+
+            # After concat:
+
+            # id	name
+            # 1	    Ram
+            # 2	    Hari
+            # 2	    Hari Updated
+            # 3	    Sita
+
+            # So now both old and new records exist together.
+
+            # keep last means keep the latest record
+                #             Keep the newest/latest record.
+
+                # So:
+
+                # id	name
+                # 1	    Ram
+                # 2	    Hari Updated
+                # 3	    Sita
+                # The old Hari row is removed.
+                
         final_df = final_df.unique(subset=[primary_key], keep="last")
     else:
         final_df = new_df

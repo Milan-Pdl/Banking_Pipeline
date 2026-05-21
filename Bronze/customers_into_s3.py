@@ -982,5 +982,5 @@ if __name__ == "__main__":
     fetch_and_process_table(
         table_name="customers",
         endpoint="/customers",
-        primary_key="customer_id"
+        primary_key="cust_id"
     )
