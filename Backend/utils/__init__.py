@@ -1,2 +1,3 @@
 from .rate_limit import limiter
-__app__=["limiter"]
+from .db_schema import fetch_table_as_json
+__app__=["limiter","fetch_table_as_json"]
